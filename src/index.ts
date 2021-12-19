@@ -5,15 +5,12 @@ import { validate, isFileExist } from './validate';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
+
 // Start up an instance of app
 const app: Application = express();
 const port = process.env.PORT;
 const imagesFolder = process.env.IMAGES_FOLDER;
 const resizedImagesFolder = process.env.RESIZED_IMAGES_FOLDER;
-
-// Body parsing Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // add routing for / path
 app.get(

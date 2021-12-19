@@ -2,12 +2,13 @@
   "name": "ipapi",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/index.ts",
+    "start": "nodemon ./src/index.ts",
     "build": "npx tsc",
     "start:prod": "npm run build && node dist/index.js",
-    "test": "jasmine"
+    "test": "jasmine",
+    "lint": "eslint src/*.ts"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +38,7 @@
     "jasmine": "^3.10.0",
     "nodemon": "^2.0.15",
     "prettier": "2.5.1",
+    "request": "^2.88.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.4"
   }
