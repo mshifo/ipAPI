@@ -14,7 +14,7 @@ const Message = {
 const base_url =
   'http://localhost:3000/?fileName=sammy.png&width=100&height=50';
 
-describe('API Exists', function () {
+describe('API Works', function () {
   describe('GET /', function () {
     it('returns status code 200', function (done) {
       request.get(base_url, function (error, response) {
@@ -23,14 +23,13 @@ describe('API Exists', function () {
       });
     });
 
-    it('API Response should be valid object', function (done) {
+    it('API Response should be valid message object', function (done) {
       request.get(base_url, function (error, response, body) {
         let res = JSON.parse(body);
         expect(
           JSON.stringify(Object.keys(Message).sort()) ===
             JSON.stringify(Object.keys(res.message).sort()),
         ).toBeTruthy();
-
         done();
       });
     });

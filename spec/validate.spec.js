@@ -2,12 +2,6 @@
 /* eslint-disable no-undef */
 const request = require('request');
 
-const ErrorObject = {
-  msg: '',
-  param: '',
-  location: '',
-};
-
 const base_url = 'http://localhost:3000/?fileName=samy.png&width=0';
 
 describe('API Validation works', function () {
