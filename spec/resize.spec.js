@@ -2,15 +2,6 @@
 /* eslint-disable no-undef */
 const request = require('request');
 
-const Message = {
-  format: '',
-  width: '',
-  height: '',
-  channels: '',
-  premultiplied: '',
-  size: '',
-};
-
 const base_url =
   'http://localhost:3000/?fileName=sammy.png&width=100&height=50';
 
@@ -25,11 +16,10 @@ describe('API Works', function () {
 
     it('API Response should be valid message object', function (done) {
       request.get(base_url, function (error, response, body) {
-        let res = JSON.parse(body);
-        expect(
-          JSON.stringify(Object.keys(Message).sort()) ===
-            JSON.stringify(Object.keys(res.message).sort()),
-        ).toBeTruthy();
+        let dataRow = JSON.parse(body);
+        expect(Object.keys(dataRow.data)).toContain('format');
+        expect(Object.keys(dataRow.data)).toContain('width');
+        expect(Object.keys(dataRow.data)).toContain('height');
         done();
       });
     });

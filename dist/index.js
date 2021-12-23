@@ -39,32 +39,70 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 // Start up an instance of app
 const app = (0, express_1.default)();
+// application port to be run on
 const port = process.env.PORT;
+// folder contains images to be resized
 const imagesFolder = process.env.IMAGES_FOLDER;
+// folder contains resized images
 const resizedImagesFolder = process.env.RESIZED_IMAGES_FOLDER;
 // add routing for / path
 app.get('/', (0, validate_1.validate)([
     (0, express_validator_1.check)('fileName').exists().custom(validate_1.isFileExist),
-    (0, express_validator_1.check)('width').exists().isInt({ min: 10, max: 2000 }),
-    (0, express_validator_1.check)('height').exists().isInt({ min: 10, max: 2000 }),
+    (0, express_validator_1.check)('width').exists().isInt({ min: 10 }),
+    (0, express_validator_1.check)('height').exists().isInt({ min: 10 }),
 ]), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const fileName = req.query.fileName;
     const width = req.query.width;
-    const widthInt = parseInt(width);
+    const widthInt = parseInt(width); //parse from string to int
     const height = req.query.height;
-    const heightInt = parseInt(height);
-    yield resizeImage(fileName, widthInt, heightInt)
-        .then((data) => {
-        return res.json({
-            message: data,
-        });
-    })
-        .catch(() => {
+    const heightInt = parseInt(height); //parse from string to int
+    //check if file already resized before then don't resize again
+    checkIfResizedBefore(fileName, widthInt, heightInt)
+        .then((data) => __awaiter(void 0, void 0, void 0, function* () {
+        if (data) {
+            return res.json({
+                data,
+            });
+        }
+        else {
+            // resize if not resized before
+            yield resizeImage(fileName, widthInt, heightInt)
+                .then((data) => {
+                return res.json({
+                    data,
+                });
+            })
+                .catch((error) => {
+                return res.status(500).json({
+                    message: error,
+                });
+            });
+        }
+    }))
+        .catch((error) => {
         return res.status(500).json({
-            message: 'error resizing image, please try again later',
+            message: error,
         });
     });
 }));
+const checkIfResizedBefore = function (fileName, width, height) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield (0, sharp_1.default)(resizedImagesFolder + fileName)
+            .metadata() //get file metadata
+            .then((data) => {
+            if (data.width === width && data.height === height) {
+                //if width and height the same as the file's
+                return data;
+            }
+            else {
+                return false;
+            }
+        })
+            .catch(() => {
+            return false;
+        });
+    });
+};
 const resizeImage = function (fileName, width, height) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
