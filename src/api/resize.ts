@@ -1,5 +1,8 @@
 import { Router, Request, Response } from 'express';
-import middleware from '../middlewares';
+import {
+  validate,
+  fileValidationRules,
+} from '../middlewares/validate';
 import ResizeService from '../services/ResizeService';
 import config from '../config';
 import path from 'path';
@@ -8,7 +11,8 @@ const apiRoutes = Router();
 
 apiRoutes.get(
   '/',
-  middleware.validation,
+  fileValidationRules(),
+  validate,
   (req: Request, res: Response) => {
     const fileName = req.query.fileName as string;
     const fullFileName = `${fileName}${config.imageType}`;

@@ -1,34 +1,36 @@
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import {
   validationResult,
-  ValidationChain,
   CustomValidator,
+  query,
+  ValidationChain,
 } from 'express-validator';
 import * as fs from 'fs';
 import config from '../config';
 
-// parallel processing
-const validate = (validations: ValidationChain[]) => {
-  return async (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) => {
-    await Promise.all(
-      validations.map((validation) => validation.run(req)),
-    );
+const fileValidationRules = (): ValidationChain[] => {
+  return [
+    query('fileName').exists().custom(isFileExist), //validate if file already exists
+    query('width').exists().isInt({ min: 10 }), //validation
+    query('height').exists().isInt({ min: 10 }),
+  ];
+};
 
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      return next();
-    }
+const validate = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    return next();
+  }
 
-    res.send(
-      `<strong>${errors.array()[0].param}: ${
-        errors.array()[0].msg
-      }</strong>`,
-    );
-  };
+  res.send(
+    `<strong>${errors.array()[0].param}: ${
+      errors.array()[0].msg
+    }</strong>`,
+  );
 };
 
 const isFileExist: CustomValidator = (value): Promise<void> => {
@@ -36,4 +38,4 @@ const isFileExist: CustomValidator = (value): Promise<void> => {
   return fs.promises.access(filePath, fs.constants.F_OK);
 };
 
-export { validate, isFileExist };
+export { fileValidationRules, validate };
