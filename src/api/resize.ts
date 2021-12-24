@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import middleware from '../middlewares';
 import ResizeService from '../services/ResizeService';
+import config from '../config';
+import path from 'path';
 
 const apiRoutes = Router();
 
@@ -8,7 +10,8 @@ apiRoutes.get(
   '/',
   middleware.validation,
   (req: Request, res: Response) => {
-    const fileName = req.query.fileName as string;
+    let fileName = req.query.fileName as string;
+    fileName = `${fileName}${config.imageType}`;
     const width = req.query.width as string;
     const widthInt = parseInt(width); //parse from string to int
     const height = req.query.height as string;
@@ -17,11 +20,11 @@ apiRoutes.get(
     const service = new ResizeService(fileName, widthInt, heightInt);
     service
       .resizeImage()
-      .then((data) => {
-        return res.status(200).json({ data });
+      .then(() => {
+        res.sendFile(path.resolve(`./images/resized/${fileName}`));
       })
-      .catch((error) => {
-        return res.status(500).json({ message: error });
+      .catch(() => {
+        res.send(`<strong>error resizing image</strong>`);
       });
   },
 );

@@ -16,4 +16,6 @@ export default {
   imagesFolder: process.env.IMAGES_FOLDER,
   // folder contains resized images
   resizedImagesFolder: process.env.RESIZED_IMAGES_FOLDER,
+
+  imageType: process.env.DEFAULT_IMAGE_TYPE,
 };

@@ -5,9 +5,7 @@ import {
   CustomValidator,
 } from 'express-validator';
 import * as fs from 'fs';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import config from '../config';
 
 // parallel processing
 const validate = (validations: ValidationChain[]) => {
@@ -25,12 +23,16 @@ const validate = (validations: ValidationChain[]) => {
       return next();
     }
 
-    res.status(400).json({ errors: errors.array() });
+    res.send(
+      `<strong>${errors.array()[0].param}: ${
+        errors.array()[0].msg
+      }</strong>`,
+    );
   };
 };
 
 const isFileExist: CustomValidator = (value) => {
-  const filePath = process.env.IMAGES_FOLDER + value;
+  const filePath = `${config.imagesFolder}${value}${config.imageType}`;
   return fs.promises.access(filePath, fs.constants.F_OK);
 };
 

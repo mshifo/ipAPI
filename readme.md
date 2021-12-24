@@ -40,6 +40,14 @@ npm run test
 npm run lint
 ```
 
+## prettier
+
+- run the following command in the terminal of the root folder:
+
+```js
+npm run prettier
+```
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
