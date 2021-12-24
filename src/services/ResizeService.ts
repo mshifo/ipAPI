@@ -1,4 +1,4 @@
-import sharp from 'sharp';
+import sharp, { Metadata } from 'sharp';
 import config from '../config';
 
 export default class ResizeService {
@@ -10,7 +10,7 @@ export default class ResizeService {
     this.width = width;
     this.height = height;
   }
-  public async checkIfResizedBefore() {
+  public async checkIfResizedBefore(): Promise<boolean | Metadata> {
     return await sharp(
       `${config.resizedImagesFolder}${this.fileName}`,
     )
@@ -31,7 +31,7 @@ export default class ResizeService {
       });
   }
 
-  public async resizeImage() {
+  public async resizeImage(): Promise<boolean | Metadata> {
     return this.checkIfResizedBefore()
       .then(async (data) => {
         if (data) {

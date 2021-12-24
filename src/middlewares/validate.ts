@@ -31,7 +31,7 @@ const validate = (validations: ValidationChain[]) => {
   };
 };
 
-const isFileExist: CustomValidator = (value) => {
+const isFileExist: CustomValidator = (value): Promise<void> => {
   const filePath = `${config.imagesFolder}${value}${config.imageType}`;
   return fs.promises.access(filePath, fs.constants.F_OK);
 };
