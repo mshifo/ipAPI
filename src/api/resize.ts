@@ -10,18 +10,24 @@ apiRoutes.get(
   '/',
   middleware.validation,
   (req: Request, res: Response) => {
-    let fileName = req.query.fileName as string;
-    fileName = `${fileName}${config.imageType}`;
+    const fileName = req.query.fileName as string;
+    const fullFileName = `${fileName}${config.imageType}`;
     const width = req.query.width as string;
     const widthInt = parseInt(width); //parse from string to int
     const height = req.query.height as string;
     const heightInt = parseInt(height); //parse from string to int
 
-    const service = new ResizeService(fileName, widthInt, heightInt);
+    const service = new ResizeService(
+      fullFileName,
+      widthInt,
+      heightInt,
+    );
     service
       .resizeImage()
       .then(() => {
-        res.sendFile(path.resolve(`./images/resized/${fileName}`));
+        res.sendFile(
+          path.resolve(`./images/resized/${fullFileName}`),
+        );
       })
       .catch(() => {
         res.send(`<strong>error resizing image</strong>`);
