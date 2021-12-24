@@ -58,32 +58,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isFileExist = exports.validate = void 0;
-var express_validator_1 = require("express-validator");
+var ResizeService_1 = __importDefault(require("../services/ResizeService"));
 var fs = __importStar(require("fs"));
-var config_1 = __importDefault(require("../config"));
-// parallel processing
-var validate = function (validations) {
-    return function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-        var errors;
+describe('test resize function', function () {
+    it('should return valid data object', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var service, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, Promise.all(validations.map(function (validation) { return validation.run(req); }))];
+                case 0:
+                    service = new ResizeService_1.default('santamonica.jpg', 500, 1000);
+                    return [4 /*yield*/, service.resizeImage()];
                 case 1:
-                    _a.sent();
-                    errors = (0, express_validator_1.validationResult)(req);
-                    if (errors.isEmpty()) {
-                        return [2 /*return*/, next()];
-                    }
-                    res.send("<strong>".concat(errors.array()[0].param, ": ").concat(errors.array()[0].msg, "</strong>"));
+                    result = _a.sent();
+                    expect(fs.existsSync("./images/resized/santamonica.jpg")).toBeTruthy();
+                    expect(Object.keys(result)).toContain('format');
+                    expect(Object.keys(result)).toContain('width');
+                    expect(Object.keys(result)).toContain('height');
                     return [2 /*return*/];
             }
         });
-    }); };
-};
-exports.validate = validate;
-var isFileExist = function (value) {
-    var filePath = "".concat(config_1.default.imagesFolder).concat(value).concat(config_1.default.imageType);
-    return fs.promises.access(filePath, fs.constants.F_OK);
-};
-exports.isFileExist = isFileExist;
+    }); });
+});
